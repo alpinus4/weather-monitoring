@@ -48,4 +48,4 @@ jobs:
           context: webapp
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository }}/webapp:${{ env.tag }}
+          tags: ghcr.io/${{ github.repository }}-webapp:${{ env.tag }}
