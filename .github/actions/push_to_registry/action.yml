@@ -6,15 +6,8 @@ inputs:
     description: 'Directory with Dockerfile'
     required: true
 
-"on":
-  workflow_call:
-
-jobs:
-  build-and-push-image:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+runs:
+  using: "composite"
     steps:
       -
         name: Checkout repository
