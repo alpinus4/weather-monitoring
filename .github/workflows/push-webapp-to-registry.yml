@@ -8,7 +8,14 @@ name: Build and publish containers imnages
       - 'master'
 
 jobs:
-  webapp:
-    uses: ./.github/actions/push_to_registry
-    with:
-      DIRECTORY: "webapp"
+  build-and-push-image-webapp:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      -
+        name: Push webapp to registry
+        uses: ./.github/actions/push_to_registry
+        with:
+          DIRECTORY: "webapp"  
