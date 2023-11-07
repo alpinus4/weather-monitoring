@@ -1,0 +1,16 @@
+name: Build and publish webapp container image
+
+"on":
+  push:
+    paths:
+      - 'webapp/**'
+    tags:
+      - '*'
+    branches:
+      - 'master'
+
+jobs:
+  push-to-registry:
+    uses: ./.github/actions/push_to_registry
+    with:
+      CMAKE_BUILD_TYPE: "webapp"
