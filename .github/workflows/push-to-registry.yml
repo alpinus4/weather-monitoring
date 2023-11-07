@@ -16,6 +16,8 @@ jobs:
         include:
           - context: webapp
             image: ghcr.io/alpinus4/${{ github.repository }}-webapp
+          - context: data_generator
+            image: ghcr.io/alpinus4/${{ github.repository }}-data-generator
     permissions:
       contents: read
       packages: write
@@ -53,7 +55,7 @@ jobs:
           images: ${{ matrix.image }}
     
       -
-        name: Build and push webapp
+        name: Build and push
         uses: docker/build-push-action@v3
         with:
           context: ${{ matrix.context }}

@@ -1,0 +1,28 @@
+version: '3.9'
+
+volumes:
+  mongodb:
+
+services:
+  webapp:
+    image: ghcr.io/alpinus4/alpinus4/weather-monitoring-webapp:master
+    ports:
+      - 8080:80
+  generator:
+    image: ghcr.io/alpinus4/alpinus4/weather-monitoring-data-generator:master
+  rabbitmq:
+    image: rabbitmq:3.12.8-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - 5672:5672
+      - 15672:15672
+  mongodb:
+    image: mongo
+    restart: always
+    volumes:
+      - mongodb:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
