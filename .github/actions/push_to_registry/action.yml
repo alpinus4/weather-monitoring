@@ -1,5 +1,6 @@
 # Copied from https://xebia.com/blog/a-ready-to-use-github-action-workflow-for-pushing-container-images-to-the-registry/
 name: Build and publish the container image
+description: 'Build and publish the container image to github registry'
 
 inputs:
   DIRECTORY:
