@@ -10,6 +10,12 @@ name: Build and publish containers images
 jobs:
   build-and-push-images:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dockerfile: ./webapp/Dockerfile
+            image: ghcr.io/alpinus4/${{ github.repository }}-webapp
     permissions:
       contents: read
       packages: write
@@ -41,11 +47,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - 
+        name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ matrix.image }}
+    
       -
         name: Build and push webapp
         uses: docker/build-push-action@v3
         with:
-          context: webapp
+          context: .
+          file: ${{ matrix.dockerfile }}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository }}-webapp:${{ env.tag }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
