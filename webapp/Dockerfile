@@ -2,9 +2,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
 RUN apk add --update npm
 WORKDIR /src
-COPY ./webapp.csproj ./webapp/
+COPY webapp.csproj webapp/
 RUN dotnet restore "webapp/webapp.csproj"
-COPY . ./webapp/
+COPY . webapp/
 WORKDIR /src/webapp
 RUN dotnet publish "webapp.csproj" -c Release -o /app/publish
 
