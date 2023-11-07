@@ -15,6 +15,11 @@ jobs:
       packages: write
     steps:
       -
+        name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      -
         name: Push webapp to registry
         uses: ./.github/actions/push_to_registry
         with:
