@@ -3,6 +3,8 @@ import os
 import time
 import contextlib
 
+from weather_generator import WeatherGenerator
+
 @contextlib.contextmanager
 def rabbitmq_connection():
     rabbitmq_user = os.getenv("RABBITMQ_USER")
@@ -26,11 +28,27 @@ def rabbitmq_connection():
 def main():
     with rabbitmq_connection() as conn:
         channel = conn.channel()
-        channel.queue_declare(queue="temperature")
-        channel.basic_publish(exchange='',
-                      routing_key='hello',
-                      body='Hello World!')
-        print(" [x] Sent 'Hello World!'")
+
+        num_sensors = 4
+        for i in range(num_sensors):
+            channel.queue_declare(queue=f"temperature_{i}")
+            channel.queue_declare(queue=f"humidity_{i}")
+            channel.queue_declare(queue=f"pressure_{i}")
+            channel.queue_declare(queue=f"wind_speed_{i}")
+
+        generator = WeatherGenerator()
+        while True:
+            time.sleep(1)
+            for i in range(num_sensors):
+                temperature = generator.generate_temperature()
+                humidity = generator.generate_humidity()
+                pressure = generator.generate_pressure()
+                wind_speed = generator.generate_wind_speed()
+                channel.basic_publish(exchange='', routing_key=f"temperature_{i}", body=str(temperature))
+                channel.basic_publish(exchange='', routing_key=f"humidity_{i}", body=str(humidity))
+                channel.basic_publish(exchange='', routing_key=f"pressure_{i}", body=str(pressure))
+                channel.basic_publish(exchange='', routing_key=f"wind_speed_{i}", body=str(wind_speed))
+                print(f"Sent temperature: {temperature}, humidity: {humidity}, pressure: {pressure}, wind speed: {wind_speed}")
 
 if __name__ == "__main__":
     main()
