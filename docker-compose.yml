@@ -4,20 +4,6 @@ volumes:
   mongodb:
 
 services:
-  webapp:
-    image: ghcr.io/alpinus4/alpinus4/weather-monitoring-webapp:master
-    ports:
-      - 8080:80
-  generator:
-    image: ghcr.io/alpinus4/alpinus4/weather-monitoring-data-generator:master
-  rabbitmq:
-    image: rabbitmq:3.12.8-alpine
-    environment:
-      RABBITMQ_DEFAULT_USER: user
-      RABBITMQ_DEFAULT_PASS: password
-    ports:
-      - 5672:5672
-      - 15672:15672
   mongodb:
     image: mongo
     restart: always
@@ -26,3 +12,30 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+  rabbitmq:
+    image: rabbitmq:3.12.8-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - 5672:5672
+      - 15672:15672
+  generator:
+    build:
+      context: ./data_generator
+      dockerfile: Dockerfile
+    environment:
+      RABBITMQ_URL: "rabbitmq"
+      RABBITMQ_USER: user
+      RABBITMQ_PASSWORD: password
+    depends_on:
+      - rabbitmq
+  webapp:
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+    depends_on:
+      - rabbitmq
+      - mongodb
