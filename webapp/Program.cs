@@ -1,8 +1,16 @@
+using WebApp.Services;
+using WebApp.Workers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSingleton<RabbitMQConnectionService>();
+
+builder.Services.AddHostedService<ConsumerWorker>();
+
 
 var app = builder.Build();
 

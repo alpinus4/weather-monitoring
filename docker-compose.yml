@@ -36,6 +36,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8080:80
+    environment:
+      RABBITMQ_URL: "rabbitmq"
+      RABBITMQ_USER: user
+      RABBITMQ_PASSWORD: password
     depends_on:
       - rabbitmq
       - mongodb

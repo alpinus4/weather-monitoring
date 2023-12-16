@@ -6,9 +6,11 @@
 
 ## Setup and running
 
-`dotnet` cmdline tool version 7 has to be installed.
+```sh
+docker compose up --build
+```
 
-To run webapp:
+`dotnet` cmdline tool version 7 has to be installed to run webapp exclusively:
 ```sh
 cd webapp
 dotnet run
