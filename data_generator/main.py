@@ -27,11 +27,12 @@ def rabbitmq_connection():
     yield connection
     connection.close()
 
-def new_sensor_reading(sensor_type, value):
+def new_sensor_reading(sensor_id, sensor_type, value):
     return {
+        "sensor_id": sensor_id,
         "type": sensor_type,
         "value": value,
-        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
 
 def main():
@@ -46,15 +47,15 @@ def main():
         while True:
             time.sleep(3)
             for i in range(num_sensors):
-                temperature = new_sensor_reading("temperature", generator.generate_temperature())
-                humidity = new_sensor_reading("humidity", generator.generate_humidity())
-                pressure = new_sensor_reading("pressure", generator.generate_pressure())
-                wind_speed = new_sensor_reading("wind_speed", generator.generate_wind_speed())
+                temperature = new_sensor_reading(i, "temperature", generator.generate_temperature())
+                humidity = new_sensor_reading(i, "humidity", generator.generate_humidity())
+                pressure = new_sensor_reading(i, "pressure", generator.generate_pressure())
+                wind_speed = new_sensor_reading(i, "wind_speed", generator.generate_wind_speed())
                 channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(temperature))
                 channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(humidity))
                 channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(pressure))
                 channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(wind_speed))
-                print(f"Sent temperature: {temperature}, humidity: {humidity}, pressure: {pressure}, wind speed: {wind_speed}")
+                print(f"Sent {temperature}, {humidity}, {pressure}, {wind_speed}")
 
 if __name__ == "__main__":
     main()
