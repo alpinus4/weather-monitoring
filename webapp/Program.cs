@@ -1,11 +1,13 @@
-using WebApp.Services;
-using WebApp.Workers;
+using webapp.Services;
+using webapp.Workers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSingleton<MongoDBConnectionService>();
 
 builder.Services.AddSingleton<RabbitMQConnectionService>();
 
