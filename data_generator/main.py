@@ -2,6 +2,8 @@ import pika
 import os
 import time
 import contextlib
+import datetime
+import json
 
 from weather_generator import WeatherGenerator
 
@@ -25,29 +27,33 @@ def rabbitmq_connection():
     yield connection
     connection.close()
 
+def new_sensor_reading(sensor_type, value):
+    return {
+        "type": sensor_type,
+        "value": value,
+        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+
 def main():
     with rabbitmq_connection() as conn:
         channel = conn.channel()
 
         num_sensors = 4
-        for i in range(num_sensors):
-            channel.queue_declare(queue=f"temperature_{i}")
-            channel.queue_declare(queue=f"humidity_{i}")
-            channel.queue_declare(queue=f"pressure_{i}")
-            channel.queue_declare(queue=f"wind_speed_{i}")
+        sensor_queue = "sensor_data"
+        channel.queue_declare(queue=sensor_queue)
 
         generator = WeatherGenerator()
         while True:
-            time.sleep(1)
+            time.sleep(3)
             for i in range(num_sensors):
-                temperature = generator.generate_temperature()
-                humidity = generator.generate_humidity()
-                pressure = generator.generate_pressure()
-                wind_speed = generator.generate_wind_speed()
-                channel.basic_publish(exchange='', routing_key=f"temperature_{i}", body=str(temperature))
-                channel.basic_publish(exchange='', routing_key=f"humidity_{i}", body=str(humidity))
-                channel.basic_publish(exchange='', routing_key=f"pressure_{i}", body=str(pressure))
-                channel.basic_publish(exchange='', routing_key=f"wind_speed_{i}", body=str(wind_speed))
+                temperature = new_sensor_reading("temperature", generator.generate_temperature())
+                humidity = new_sensor_reading("humidity", generator.generate_humidity())
+                pressure = new_sensor_reading("pressure", generator.generate_pressure())
+                wind_speed = new_sensor_reading("wind_speed", generator.generate_wind_speed())
+                channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(temperature))
+                channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(humidity))
+                channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(pressure))
+                channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(wind_speed))
                 print(f"Sent temperature: {temperature}, humidity: {humidity}, pressure: {pressure}, wind speed: {wind_speed}")
 
 if __name__ == "__main__":
