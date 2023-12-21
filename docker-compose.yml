@@ -7,8 +7,8 @@ services:
   mongodb:
     image: mongo
     restart: always
-    volumes:
-      - mongodb:/data/db
+    tmpfs:
+      - /data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
@@ -40,6 +40,7 @@ services:
       RABBITMQ_URL: "rabbitmq"
       RABBITMQ_USER: user
       RABBITMQ_PASSWORD: password
+      MONGODB_URL: mongodb://root:example@mongodb:27017
     depends_on:
       - rabbitmq
       - mongodb
