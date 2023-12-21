@@ -4,6 +4,7 @@ import time
 import contextlib
 import datetime
 import json
+import sys
 
 from weather_generator import WeatherGenerator
 
@@ -44,18 +45,22 @@ def main():
         channel.queue_declare(queue=sensor_queue)
 
         generator = WeatherGenerator()
-        while True:
-            time.sleep(3)
-            for i in range(num_sensors):
-                temperature = new_sensor_reading(i, "temperature", generator.generate_temperature())
-                humidity = new_sensor_reading(i, "humidity", generator.generate_humidity())
-                pressure = new_sensor_reading(i, "pressure", generator.generate_pressure())
-                wind_speed = new_sensor_reading(i, "wind_speed", generator.generate_wind_speed())
-                channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(temperature))
-                channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(humidity))
-                channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(pressure))
-                channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(wind_speed))
-                print(f"Sent {temperature}, {humidity}, {pressure}, {wind_speed}")
+        try:
+            while True:
+                time.sleep(3)
+                for i in range(num_sensors):
+                    temperature = new_sensor_reading(i, "temperature", generator.generate_temperature())
+                    humidity = new_sensor_reading(i, "humidity", generator.generate_humidity())
+                    pressure = new_sensor_reading(i, "pressure", generator.generate_pressure())
+                    wind_speed = new_sensor_reading(i, "wind_speed", generator.generate_wind_speed())
+                    channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(temperature))
+                    channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(humidity))
+                    channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(pressure))
+                    channel.basic_publish(exchange='', routing_key=sensor_queue, body=json.dumps(wind_speed))
+                    print(f"Sent {temperature}, {humidity}, {pressure}, {wind_speed}")
+        except KeyboardInterrupt:
+            print("Interrupted by user, exiting...")
+            sys.exit(0)
 
 if __name__ == "__main__":
     main()
