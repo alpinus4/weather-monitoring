@@ -1,18 +1,108 @@
-/* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
-code {
-  color: #E01A76;
+th {
+  background-color: #f8f9fa; /* Jasny odcień szarości */
 }
 
-.btn-primary {
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 5px;
+}
+
+button span {
+  display: inline-block;
+  margin: 3px 0;
+}
+
+/* Styling dla DatePickera */
+
+.react-datepicker-wrapper {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.react-datepicker-popper {
+  z-index: 1; /* Zapewnienie, że DatePickery będą widoczne nad innymi elementami */
+}
+
+/* Styling dla checkboxów */
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+/* Styling dla przycisku Filtruj */
+
+.filter-button {
+  background-color: #007bff; /* Kolor przycisku */
   color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px; /* Odstęp od elementów w wierszu */
+}
+
+/* Styl dla komunikatu ładowania */
+
+.loading-message {
+  font-style: italic;
+  color: #6c757d;
+}
+
+/* Styl kontenera */
+
+.fetch-data-container {
+  margin-top: 20px;
+}
+
+/* Styl nagłówka */
+
+header {
+  background-color: #6c757d; /* Odcień szarości */
+  padding: 10px 0;
+}
+
+/* Styl nawigacji */
+
+.navbar {
+  background-color: #fff; /* Biały */
+}
+
+.navbar-brand {
+  font-size: 24px;
+  color: #6c757d; /* Odcień szarości */
+}
+
+.navbar-toggler-icon {
+  background-color: #6c757d; /* Odcień szarości */
+}
+
+.navbar-nav {
+  margin-left: auto;
+}
+
+.nav-item {
+  margin-right: 15px;
+}
+
+.text-dark {
+  color: #343a40 !important;
 }
