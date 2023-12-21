@@ -1,6 +1,6 @@
 using RabbitMQ.Client;
 
-namespace WebApp.Services;
+namespace webapp.Services;
 
 public class RabbitMQConnectionService
 {
