@@ -3,7 +3,7 @@ import { FetchData } from "./components/FetchData";
 const AppRoutes = [
   {
     index: true,
-    path: '/fetch-data',
+    path: '/',
     element: <FetchData />
   }
 ];

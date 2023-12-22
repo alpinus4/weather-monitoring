@@ -28,7 +28,7 @@ export class FetchData extends Component {
   renderForecastsTable() {
     return (
       <div>
-        <button onClick={() => this.populateWeatherData()}>Filtruj</button>
+        <button onClick={() => this.populateWeatherData()}>Filter</button>
         <table className="table table-striped" aria-labelledby="tableLabel">
           <thead>
             <tr>
@@ -122,8 +122,7 @@ export class FetchData extends Component {
 
     return (
       <div>
-        <h1 id="tableLabel">Weather forecast</h1>
-        <p>This component demonstrates fetching data from the server.</p>
+        <h1 id="tableLabel">Weather monitoring</h1>
         {contents}
       </div>
     );
@@ -148,11 +147,22 @@ export class FetchData extends Component {
     
   }
 
-  handleSort = (columnName, direction) => {
-    this.setState({ loading: true });
-    this.setState({ sortBy: columnName, sortDirection: direction });
-    this.setState({ loading: false });
+  handleSort = async (columnName, direction) => {
+    this.setState({ sortBy: columnName, sortDirection: direction }, () => {
+      this.sortWeatherData(); // Fetch sorted data after updating the state
+    });
     console.log(`Sort by ${columnName} ${direction}`);
+  }
+
+  async sortWeatherData() {
+    this.setState({ loading: true });
+    var parameters = new URLSearchParams();
+    if(this.state.sortBy) parameters.set("sortBy", this.state.sortBy)
+    if(this.state.sortDirection) parameters.set("sortDirection", this.state.sortDirection)
+    
+    const response = await fetch('weatherforecast?'+parameters);
+    const data = await response.json();
+    this.setState({ forecasts: data, loading: false });
   }
 
   exampleSearch = () => {
