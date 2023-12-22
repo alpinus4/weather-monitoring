@@ -138,6 +138,7 @@ export class FetchData extends Component {
                   </div>
         </div>
         <button onClick={() => this.populateWeatherData()}>Filter</button>
+        <button onClick={() => this.sortWeatherData()}>&#x21BB; Refresh</button>
         <br></br>
         {contents}
       </div>

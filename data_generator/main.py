@@ -33,7 +33,7 @@ def new_sensor_reading(sensor_id, sensor_type, value):
         "sensor_id": sensor_id,
         "type": sensor_type,
         "value": value,
-        "timestamp": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+        "timestamp": (datetime.datetime.now()+ datetime.timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%S"),
     }
 
 def main():
