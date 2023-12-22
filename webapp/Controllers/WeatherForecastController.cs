@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using webapp.Model;
@@ -25,10 +27,12 @@ public class WeatherForecastController : ControllerBase
     }
 
     [HttpGet]
-    public IEnumerable<Data> Get(
+    public IActionResult Get(
         [FromQuery] string filters = "{}",
         [FromQuery] string sortBy = "timestamp",
-        [FromQuery] string sortDirection = "asc"
+        [FromQuery] string sortDirection = "asc",
+        [FromQuery] bool download = false,
+        [FromQuery] string format = "json"
 )
     {
         var filter = JsonSerializer.Deserialize<Filters>(filters);
@@ -89,6 +93,55 @@ public class WeatherForecastController : ControllerBase
             sort = Builders<Data>.Sort.Descending(sortBy);
         }
 
-        return _mongoDBConnection.GetDatabase("db").GetCollection<Data>("sensor_data").Find(mongoFilter).Sort(sort).ToList().ToArray();
+        var projection = Builders<Data>.Projection.Exclude("_id"); // Exclude the _id field
+
+        var dataList = _mongoDBConnection.GetDatabase("db")
+            .GetCollection<Data>("sensor_data")
+            .Find(mongoFilter)
+            .Project<Data>(projection) // Apply projection here
+            .Sort(sort)
+            .ToList();
+
+        
+        if (download)
+        {
+            string fileName;
+            byte[] fileContent;
+
+            if (format.ToLower() == "csv")
+            {
+                var csvContent = ConvertToCsv(dataList);
+                fileContent = Encoding.UTF8.GetBytes(csvContent);
+                fileName = "data.csv";
+                return File(fileContent, "text/csv", fileName);
+            }
+            else // Default to JSON
+            {
+                var jsonContent = JsonSerializer.Serialize(dataList);
+                fileContent = Encoding.UTF8.GetBytes(jsonContent);
+                fileName = "data.json";
+                return File(fileContent, "application/json", fileName);
+            }
+        }
+        else
+        {
+            return Ok(dataList);
+        }
+    }
+
+    private string ConvertToCsv(IEnumerable<Data> dataList)
+    {
+        var stringBuilder = new StringBuilder();
+
+        // Add CSV header
+        stringBuilder.AppendLine("Type,SensorId,Timestamp,Value");
+
+        foreach (var data in dataList)
+        {
+            // Add data rows
+            stringBuilder.AppendLine($"{data.type},{data.sensor_id},{data.timestamp:O},{data.value}");
+        }
+
+        return stringBuilder.ToString();
     }
 }

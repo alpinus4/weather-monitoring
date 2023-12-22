@@ -139,6 +139,8 @@ export class FetchData extends Component {
         </div>
         <button onClick={() => this.populateWeatherData()}>Filter</button>
         <button onClick={() => this.sortWeatherData()}>&#x21BB; Refresh</button>
+        <button onClick={() => this.download('json')}>Download JSON</button>
+        <button onClick={() => this.download('csv')}>Download CSV</button>
         <br></br>
         {contents}
       </div>
@@ -165,6 +167,35 @@ export class FetchData extends Component {
     const data = await response.json();
     this.setState({ forecasts: data, loading: false });
     
+  }
+
+  async download(format='json') {
+    var parameters = new URLSearchParams();
+    if(this.state.sortBy) parameters.set("sortBy", this.state.sortBy)
+    if(this.state.sortDirection) parameters.set("sortDirection", this.state.sortDirection)
+    parameters.set("download", true)
+    parameters.set("format", format)
+
+    var obj = {ids: this.currentSearchState.selectedIds, types: this.currentSearchState.selectedTypes};
+    if(this.currentSearchState.startDate) obj.dateFrom = this.currentSearchState.startDate.toISOString()
+    if(this.currentSearchState.endDate) obj.dateTo = this.currentSearchState.endDate.toISOString()
+    
+    parameters.set("filters", JSON.stringify(obj));
+    const response = await fetch('weatherforecast?'+parameters);
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+
+    // Generate a timestamp
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-'); // Format: YYYY-MM-DDTHH-mm-ss-sssZ
+    const fileName = `data-${timestamp}.${format}`; // e.g., data-2023-03-28T15-30-45-678Z.json
+
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode.removeChild(link);
+    window.URL.revokeObjectURL(downloadUrl);
   }
 
   handleSort = async (columnName, direction) => {
