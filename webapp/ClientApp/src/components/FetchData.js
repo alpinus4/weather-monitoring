@@ -5,6 +5,13 @@ import 'react-datepicker/dist/react-datepicker.css';
 export class FetchData extends Component {
   static displayName = FetchData.name;
 
+  currentSearchState = {
+    startDate: null,
+    endDate: null,
+    selectedIds: [],
+    selectedTypes: [], 
+  };
+
   constructor(props) {
     super(props);
     this.state = { 
@@ -15,8 +22,7 @@ export class FetchData extends Component {
       startDate: null,
       endDate: null,
       selectedIds: [],
-      selectedTypes: []
-      
+      selectedTypes: [], 
     };
   }
 
@@ -137,8 +143,11 @@ export class FetchData extends Component {
     var obj = {ids: this.state.selectedIds, types: this.state.selectedTypes};
     if(this.state.startDate) obj.dateFrom = this.state.startDate.toISOString()
     if(this.state.endDate) obj.dateTo = this.state.endDate.toISOString()
-    if(this.state.valueFrom) obj.valueFrom = this.state.valueFrom
-    if(this.state.valueTo) obj.valueTo = this.state.valueTo
+
+    this.currentSearchState.selectedIds = this.state.selectedIds
+    this.currentSearchState.selectedTypes = this.state.selectedTypes
+    this.currentSearchState.dateFrom = this.state.dateFrom
+    this.currentSearchState.dateTo = this.state.dateTo
 
     parameters.set("filters", JSON.stringify(obj));
     const response = await fetch('weatherforecast?'+parameters);
@@ -159,7 +168,12 @@ export class FetchData extends Component {
     var parameters = new URLSearchParams();
     if(this.state.sortBy) parameters.set("sortBy", this.state.sortBy)
     if(this.state.sortDirection) parameters.set("sortDirection", this.state.sortDirection)
+
+    var obj = {ids: this.currentSearchState.selectedIds, types: this.currentSearchState.selectedTypes};
+    if(this.currentSearchState.startDate) obj.dateFrom = this.currentSearchState.startDate.toISOString()
+    if(this.currentSearchState.endDate) obj.dateTo = this.currentSearchState.endDate.toISOString()
     
+    parameters.set("filters", JSON.stringify(obj));
     const response = await fetch('weatherforecast?'+parameters);
     const data = await response.json();
     this.setState({ forecasts: data, loading: false });
