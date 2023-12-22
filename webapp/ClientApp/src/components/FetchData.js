@@ -34,75 +34,42 @@ export class FetchData extends Component {
   renderForecastsTable() {
     return (
       <div>
-        <button onClick={() => this.populateWeatherData()}>Filter</button>
         <table className="table table-striped" aria-labelledby="tableLabel">
           <thead>
             <tr>
               <th>
                 Date
-                <button onClick={() => this.handleSort('timestamp', 'asc')}>
+                <button className="sortBtn" onClick={() => this.handleSort('timestamp', 'asc')}>
                   <span>▲</span>
                 </button>
-                <button onClick={() => this.handleSort('timestamp', 'desc')}>
+                <button className="sortBtn" onClick={() => this.handleSort('timestamp', 'desc')}>
                   <span>▼</span>
                 </button>
-
-                <span>Date range:</span>
-                <DatePicker
-                  onChange={(date) => this.handleDateChange(date)}
-                  selectsRange={true}
-                  startDate={this.state.startDate}
-                  endDate={this.state.endDate}
-                />
               </th>
               <th>
-                Id
-                {[0, 1, 2, 3].map(id => (
-                  <label key={id}>
-                    <br></br>
-                    {id}: 
-                    <input 
-                      type="checkbox" 
-                      checked={this.state.selectedIds.includes(id)} 
-                      onChange={() => this.handleCheckboxChange(id)}
-                    />
-                  </label>
-                ))}
-                <br></br>            
-                <button onClick={() => this.handleSort('sensor_id', 'asc')}>
+                Id           
+                <button className="sortBtn" onClick={() => this.handleSort('sensor_id', 'asc')}>
                   <span>▲</span>
                 </button>
-                <button onClick={() => this.handleSort('sensor_id', 'desc')}>
+                <button className="sortBtn" onClick={() => this.handleSort('sensor_id', 'desc')}>
                   <span>▼</span>
                 </button>
               </th>
               <th>
                 Sensor Type 
-                {["temperature", "humidity", "pressure", "wind_speed"].map(type => (
-                  <label key={type}>
-                    <br></br>
-                    {type}: 
-                    <input 
-                      type="checkbox" 
-                      checked={this.state.selectedTypes.includes(type)} 
-                      onChange={() => this.handleTypeCheckboxChange(type)}
-                    />
-                  </label>
-                ))}
-                <br></br>
-                <button onClick={() => this.handleSort('type', 'asc')}>
+                <button className="sortBtn" onClick={() => this.handleSort('type', 'asc')}>
                   <span>▲</span>
                 </button>
-                <button onClick={() => this.handleSort('type', 'desc')}>
+                <button className="sortBtn" onClick={() => this.handleSort('type', 'desc')}>
                   <span>▼</span>
                 </button>
               </th>
               <th>
                 Value 
-                <button onClick={() => this.handleSort('value', 'asc')}>
+                <button className="sortBtn" onClick={() => this.handleSort('value', 'asc')}>
                   <span>▲</span>
                 </button>
-                <button onClick={() => this.handleSort('value', 'desc')}>
+                <button className="sortBtn" onClick={() => this.handleSort('value', 'desc')}>
                   <span>▼</span>
                 </button>
               </th>
@@ -129,6 +96,49 @@ export class FetchData extends Component {
     return (
       <div>
         <h1 id="tableLabel">Weather monitoring</h1>
+        <div className="input-row">
+          <div className="input-section">
+            <span>Date range:</span>
+                    <DatePicker
+                      onChange={(date) => this.handleDateChange(date)}
+                      selectsRange={true}
+                      startDate={this.state.startDate}
+                      endDate={this.state.endDate}
+                    />
+          </div>
+          
+          <div className="input-section">
+          <span>Sensor type:</span>
+          {["temperature", "humidity", "pressure", "wind_speed"].map(type => (
+                    <label key={type}>
+                      <br></br>
+                      {type}: 
+                      <input 
+                        type="checkbox" 
+                        checked={this.state.selectedTypes.includes(type)} 
+                        onChange={() => this.handleTypeCheckboxChange(type)}
+                      />
+                    </label>
+                  ))}
+                  </div>
+          
+          <div className="input-section">
+          <span>Id:</span>
+          {[0, 1, 2, 3].map(id => (
+                    <label key={id}>
+                      <br></br>
+                      {id}: 
+                      <input 
+                        type="checkbox" 
+                        checked={this.state.selectedIds.includes(id)} 
+                        onChange={() => this.handleCheckboxChange(id)}
+                      />
+                    </label>
+                  ))}
+                  </div>
+        </div>
+        <button onClick={() => this.populateWeatherData()}>Filter</button>
+        <br></br>
         {contents}
       </div>
     );

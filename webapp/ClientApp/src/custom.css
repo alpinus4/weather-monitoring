@@ -15,6 +15,10 @@ th {
 }
 
 button {
+  cursor: pointer;
+}
+
+.sortBtn {
   background: none;
   border: none;
   cursor: pointer;
@@ -22,7 +26,7 @@ button {
   margin-left: 5px;
 }
 
-button span {
+.sortBtn span {
   display: inline-block;
   margin: 3px 0;
 }
@@ -105,4 +109,28 @@ header {
 
 .text-dark {
   color: #343a40 !important;
+}
+
+.input-row {
+  display: flex;
+  flex-wrap: wrap; /* Allows wrapping if the row gets too wide */
+  justify-content: space-between; /* Adjust as needed for spacing */
+  align-items: center; /* Align items vertically in the center */
+}
+
+.input-section {
+  display: flex;
+  align-items: center; /* Align labels and inputs in the center */
+  margin-right: 10px; /* Space between sections */
+}
+
+.input-section span {
+  font-weight: bold; /* Makes the text bold */
+  margin-right: 10px; /* Adds spacing to the right of the span */
+}
+
+.input-section label {
+  margin-right: 10px; /* Adds spacing between each checkbox */
+  display: flex; /* Aligns the checkbox and label text nicely */
+  align-items: center; /* Centers the items vertically */
 }
